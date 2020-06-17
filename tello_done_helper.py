@@ -6,6 +6,7 @@ from multipledispatch import dispatch
 class Tello:
     sock : socket = None
     tello_address = None
+    is_flying = False
 
     def __init__(self,address: str='', port: int = 9000, tello_address: str = '192.168.10.1', tello_port: int=8889):
 
@@ -16,34 +17,48 @@ class Tello:
         self.sock=socket(AF_INET, SOCK_DGRAM)
         self.sock.bind((address, port))
 
-        self.command()
-        data, server = self.sock.recvfrom(1518)
+        # recive messages that comes from the threading
+        Thread(target=self.recv).start()
+
+        # self.command()
+        # data,server = self.sock.recvfrom(1518)
+        # data=data.decode(encoding="utf-8")
 
         # if data != 'ok':
-
-
-        # # recive messages that comes from the threading
-        # Thread(target=self.recv).start()
+        #     Exception('Somthing went wrong')
+        #     return
+        
+        print("yeet")
 
     def send(self, msg):
         self.sock.sendto(msg.encode(encoding="utf-8") , self.tello_address)
     
     def recv(self):
+        print("recv")
         while True: 
             try:
                 data, server = self.sock.recvfrom(1518)
-                print(data.decode(encoding="utf-8"))
+                print(f'\nDrone: {data.decode(encoding="utf-8")}\n')
             except Exception:
-                print ('\nExit . . .\n')
+                print("Error ocurred")
+                self.command()
                 break
 
     def command(self):
         self.send('command')
 
     def takeoff(self):
+        # if self.is_flying:
+        #     print('alredy flying!')
+        #     return
+        
         self.send('takeoff')
 
     def land(self):
+        # if not self.is_flying:
+        #     print('I need to fly to do that')
+        #     return
+
         self.send('land')
 
     def streamon(self):
@@ -109,8 +124,8 @@ class Tello:
     def speed(self, x):
         self.send(f'speed {x}')
 
-    def rc(self, a, b, c, d):
-        self.send(f'rc {a} {b} {c} {d}')
+    def rc(self, left_right=0, forward_backward=0, up_down=0, yaw=0):
+        self.send(f'rc {left_right} {forward_backward} {up_down} {yaw}')
 
     def wifi(self, ssid, passwod):
         self.send(f'wifi {ssid} {passwod}')
