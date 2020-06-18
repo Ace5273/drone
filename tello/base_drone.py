@@ -26,9 +26,9 @@ class BaseDrone(ABC):
         # self.command()
         while True: 
             try:
-                data, server = self.sock.recvfrom(1518)
+                data, _ = self.sock.recvfrom(1518)
                 print(f'\nDrone: {data.decode(encoding="utf-8")}\n')
-                print(server)
+                # print(server)
             except Exception:
                 print("Error ocurred")
                 break
