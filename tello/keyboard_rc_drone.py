@@ -34,6 +34,8 @@ class KeyboardRcDrone(RcDrone):
         if backwards:
             on_press_key(backwards, lambda a: self.set_rc_val(z_axis=self.speed))
             on_release_key(backwards, lambda a: self.stop_z_axis())
+        
+        return self
     
     def set_speed(self, speed):
         self.speed = speed

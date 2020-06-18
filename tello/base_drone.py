@@ -23,6 +23,7 @@ class BaseDrone(ABC):
     
     def recv(self):
         print("recv")
+        # self.command()
         while True: 
             try:
                 data, server = self.sock.recvfrom(1518)
