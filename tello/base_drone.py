@@ -27,6 +27,7 @@ class BaseDrone(ABC):
             try:
                 data, server = self.sock.recvfrom(1518)
                 print(f'\nDrone: {data.decode(encoding="utf-8")}\n')
+                print(server)
             except Exception:
                 print("Error ocurred")
                 break
