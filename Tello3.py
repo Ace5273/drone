@@ -26,9 +26,6 @@ def is_gyro_move(gyro,prev_gyro, axis= 'x', limit=40):
     movement = fabs(gyro[axis] - prev_gyro[axis])
     return movement > limit
 
-# prev_acc = mpu.get_accel_data()
-# prev_gyro = mpu.get_gyro_data()
-
 acc = mpu.get_accel_data()
 gyro = mpu.get_gyro_data()
 
