@@ -15,6 +15,9 @@ class RcDrone(BaseDrone):
     
     def stop_z_axis(self):
         self.set_rc_val(z_axis=0)
+    
+    def stop_yaw(self):
+        self.set_rc_val(yaw=0)
 
     def set_rc_val(self, x_axis=None, y_axis=None, z_axis=None, yaw=None):
 
