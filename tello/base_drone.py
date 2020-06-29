@@ -1,5 +1,5 @@
 from socket import socket, AF_INET,SOCK_DGRAM
-from threading import Thread 
+from threading import Thread
 from abc import ABC, abstractclassmethod
 
 class BaseDrone(ABC):
