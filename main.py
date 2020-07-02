@@ -1,73 +1,53 @@
 
-from mpu6050 import mpu6050
-from tello import RcDrone
 from time import sleep
-from math import fabs
 import asyncio
+from gpiozero import Button
+from signal import pause
+from hand_remote import HandRemoteSerivce
 
-loop = asyncio.get_event_loop()
+button = Button(18)
 
 # This is a simple sign function
 sign = lambda x: (1, -1)[x < 0]
 
-# The objects
-drone = None
-mpu = None
-
-
-
-def init_drone():
-    drone = RcDrone()
-    print('Drone intialized')
-
-def init_mpu():
-    mpu = mpu6050(0x68)
-
-    # These were my values to intialize
-    # to each their own
-    mpu.set_x_accel_offset(-3707.84719999997)
-    mpu.set_y_accel_offset(1535.716800000001)
-    mpu.set_z_accel_offset(1369.4265000000087)
-    mpu.set_x_gyro_offset(555.0092749999922)
-    mpu.set_y_gyro_offset(-48.365825000000285)
-    mpu.set_z_gyro_offset(-6.769650000000018)
-
-    # Setting up the ranges of the mpu 
-    mpu.set_accel_range(mpu.ACCEL_RANGE_16G)
-    mpu.set_gyro_range(mpu.GYRO_RANGE_2000DEG)
-
-    print('Mpu intialized')
-
-async def print_info():
-    # x = input()
-    while True:
-        print('print_info')
-        await async_sleep(2)
-
-async def print_info2():
-    # x = input()
-    while True:
-        print('print_info2')
-        await asyncio.sleep(2)
-
-async def main(**args):
+def main():
     print('main')
-    await asyncio.gather(print_info(), print_info2())
-    # init_drone()
-    # init_mpu()
-    # print_info()
-    # while True:
-    #     print('check1')
-    #     await async_sleep(2)
-        # sleep(1)
-        # x = input()
-        # print(x)
-        # if(x == 'c'):
-        #     loop.stop()
+    hand_remote_service = HandRemoteSerivce()
+
+    button.when_deactivated = hand_remote_service.reset_drone_velocity
+
+    # # The accleration movement
+    # prev_acc = {'x': 0, 'y': 0, 'z':0}
+    # curr_acc = {'x': 0, 'y': 0, 'z':0}
+    # min_acc = 1.5
+
+    # # The angular movement
+    # prev_gyro = {'x': 0, 'y': 0, 'z':0}
+    # curr_gyro = {'x': 0, 'y': 0, 'z':0}
+    # min_gyro = 6.3
+    button.hold_repeat = True
+    button.hold_time = 0.1
+    button.when_held = lambda: print('active')
+    sleep(0.1)
+    # await asyncio.sleep(0.1)
+    while True:
+        prev_acc = curr_acc
+        curr_acc = hand_remote_service.mpu.get_accel_data()
+        prev_gyro = curr_gyro
+        curr_gyro = hand_remote_service.mpu.get_gyro_data()
+        # print(curr_gyro)
+
+        if button.is_active:
+            hand_remote_service.add_acc_difffrence_to_velocity(curr_acc, prev_acc, min_acc)
+            hand_remote_service.add_gyro_difffrence_to_velocity(curr_gyro, prev_gyro, min_gyro)
+
+        sleep(0.1)
+        # await asyncio.sleep(0.1)
 
 if __name__ == "__main__":
     try:
-        loop.run_until_complete(main())
+        main()
+        # asyncio.get_event_loop().run_until_complete(main())
     
     # Literally any exception
     except KeyboardInterrupt:

@@ -3,6 +3,25 @@ from tello import RcDrone, KeyboardRcDrone
 from time import sleep
 from math import fabs
 
+
+        # if math.fabs(x) < self.gyro_limit:
+        #     x = 0
+        
+        # if math.fabs(y) < self.gyro_limit:
+        #     y = 0
+        
+        # if math.fabs(z) < self.gyro_limit:
+        #     z = 0
+        
+        #         if math.fabs(x) < self.acc_limit:
+        #     x = 0
+        
+        # if math.fabs(y) < self.acc_limit:
+        #     y = 0
+        
+        # if math.fabs(z) < self.acc_limit:
+        #     z = 0
+
 sign = lambda x: (1, -1)[x < 0]
 
 mpu = mpu6050(0x68)
